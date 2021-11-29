@@ -1,0 +1,3 @@
+# ignored directories
+env/
+__pycache__/
