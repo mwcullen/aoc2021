@@ -1,11 +1,2 @@
-click==8.0.3
-itsdangerous==2.0.1
-Jinja2==3.0.3
-MarkupSafe==2.0.1
-prompt-toolkit==1.0.14
-Pygments==2.10.0
-PyInquirer==1.0.3
-regex==2021.11.10
-six==1.16.0
-wcwidth==0.2.5
-Werkzeug==2.0.2
+numpy==1.21.4
+pkg-resources==0.0.0
