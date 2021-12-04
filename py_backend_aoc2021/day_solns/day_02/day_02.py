@@ -30,7 +30,7 @@ def main():
 
     instructionsRaw = f.read()
 
-    lstRawInstructions:List[str] = instructionsRaw.splitlines()
+    lstRawInstructions: List[str] = instructionsRaw.splitlines()
 
     parsedInstructions = [Instruction]
 
