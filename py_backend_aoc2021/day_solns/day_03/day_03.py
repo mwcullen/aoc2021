@@ -89,7 +89,6 @@ def returnCO2Rating(l1: List[List[int]]) -> int:
     return toDecimal(templ1[0])
 
 
-
 def main():
     f = open("./input1.txt", "r", encoding='utf8')
 
