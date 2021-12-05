@@ -2,14 +2,10 @@
 
 It's that time of year again, Happy Holidays everyone! Will I make it more than halfway before I can't solve them anymore?
 
-## Ideas (Half Baked)
+## Ideas 
 
-~~- Try making a fairly attractive CLI application with PyInquirer~~
-- I think we're going web dev with Flask and Angular
-
+- Make a CLI application with argparse. 
+- Use only python standard library
 - Be vigiliant about tests
 - Be able to run all days at once, or one at a time, with all inputs centralized
-- Try to use numpy because I hear it's pretty good for array things
-
-## This plan is currently in disarray because December snuck up on me, currently stanalone day solutions are located in the aoc2021_py file
 
