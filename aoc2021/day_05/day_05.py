@@ -1,4 +1,3 @@
-from os import linesep
 from typing import List, NamedTuple, Tuple
 from enum import Enum
 from dataclasses import dataclass
@@ -9,23 +8,6 @@ class LineType(Enum):
     HORIZONTAL = 1
     VERTICAL = 2
     DIAGONAL = 3
-
-
-def between(val1, val2, valTest) -> bool:
-    min: int
-    max: int
-
-    if val1 <= val2:
-        min = val1
-        max = val2
-    else:
-        min = val2
-        max = val1
-
-    if min <= valTest <= max:
-        return True
-    else:
-        return False
 
 
 class Coordinates(NamedTuple):
@@ -45,31 +27,31 @@ class Line:
         # horizontal
         if self.startCoordinates.x == self.endCoordinates.x:
             return LineType.VERTICAL
-        if self.startCoordinates.y == self.endCoordinates.y:
+        elif self.startCoordinates.y == self.endCoordinates.y:
             return LineType.HORIZONTAL
-        if abs(self.startCoordinates.x - self.endCoordinates.x) == abs(self.startCoordinates.y == self.endCoordinates.y):
+        elif abs(self.startCoordinates.x - self.endCoordinates.x) == abs(self.startCoordinates.y == self.endCoordinates.y):
             return LineType.DIAGONAL
         else:
             return LineType.NONE
 
     def generatePointsList(self) -> List[Coordinates]:
         lstCoords: List[Coordinates]
-        if self.findLineType() == LineType.HORIZONTAL:
-            if self.increasingY == True:
-                for i in range(self.startCoordinates.y, self.endCoordinates.y+1):
-                    lstCoords.append(Coordinates(
-                        x=self.startCoordinates.x, y=i))
-            if self.increasingY == False:
-                for i in range(self.endCoordinates.y, self.startCoordinates.y+1):
-                    lstCoords.append(Coordinates(
-                        x=self.startCoordinates.x, y=i))
+        tempCoord: Coordinates = self.startCoordinates
+
+        while tempCoord != self.endCoordinates:
+            if self.findLineType() == LineType.HORIZONTAL:
+                tempCoord = Coordinates(tempCoord.x + 1, tempCoord.y)
+            elif self.findLineType() == LineType.VERTICAL:
+                tempCoord = Coordinates(tempCoord.x, y)
+
+        return lstCoords
 
 
 @dataclass
 class Grid:
     gridList: List[List[int]]
 
-    def addLineHoriVertOnly(self, lineSeg: Line):
+    def addLine(self, lineSeg: Line):
         return
 
     def linesIntersect(self) -> int:
@@ -128,7 +110,7 @@ def main():
                       for _ in range(gridSize[1] + 1)]))
 
     for line in lstLines:
-        grid.addLineHoriVertOnly(line)
+        grid.addLine(line)
 
     print(grid.linesIntersect())
 
