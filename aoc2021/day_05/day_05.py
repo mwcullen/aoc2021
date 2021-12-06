@@ -29,22 +29,52 @@ class Line:
             return LineType.VERTICAL
         elif self.startCoordinates.y == self.endCoordinates.y:
             return LineType.HORIZONTAL
-        elif abs(self.startCoordinates.x - self.endCoordinates.x) == abs(self.startCoordinates.y == self.endCoordinates.y):
+        elif abs(self.startCoordinates.x - self.endCoordinates.x) == abs(self.startCoordinates.y - self.endCoordinates.y):
             return LineType.DIAGONAL
         else:
             return LineType.NONE
 
     def generatePointsList(self) -> List[Coordinates]:
-        lstCoords: List[Coordinates]
+        lstCoords: List[Coordinates] = []
         tempCoord: Coordinates = self.startCoordinates
 
         while tempCoord != self.endCoordinates:
-            if self.findLineType() == LineType.HORIZONTAL:
-                tempCoord = Coordinates(tempCoord.x + 1, tempCoord.y)
-            elif self.findLineType() == LineType.VERTICAL:
-                tempCoord = Coordinates(tempCoord.x, y)
+            lstCoords.append(tempCoord)
+
+            tempCoord = self.incPoint(tempCoord)
+        
+        lstCoords.append(tempCoord)
 
         return lstCoords
+    
+    def incPoint(self, oldCoord: Coordinates) -> Coordinates:
+        newX: int = oldCoord.x
+        newY: int = oldCoord.y
+
+        if self.findLineType() == LineType.HORIZONTAL:
+            if self.increasingX:
+                newX += 1
+            else:
+                newX -= 1
+        elif self.findLineType() == LineType.VERTICAL:
+            if self.increasingY:
+                newY += 1
+            else:
+                newY -= 1
+        elif self.findLineType() == LineType.DIAGONAL:
+            if self.increasingX:
+                newX += 1
+            else:
+                newX -= 1
+
+            if self.increasingY:
+                newY += 1
+            else:
+                newY -= 1
+        
+        return Coordinates(newX, newY)
+
+            
 
 
 @dataclass
@@ -52,7 +82,11 @@ class Grid:
     gridList: List[List[int]]
 
     def addLine(self, lineSeg: Line):
-        return
+        if lineSeg.findLineType() == LineType.HORIZONTAL or lineSeg.findLineType() == LineType.VERTICAL or lineSeg.findLineType() == LineType.DIAGONAL:
+            lstPoints = lineSeg.generatePointsList()
+            for point in lstPoints:
+                self.gridList[point.y][point.x] += 1
+
 
     def linesIntersect(self) -> int:
         totalIntersections: int = 0
@@ -75,7 +109,7 @@ def maxGridVals(lstCoords: List[Coordinates]) -> Tuple[int, int]:
 
 
 def main():
-    f = open("./inputTest.txt", "r", encoding='utf8')
+    f = open("./input1.txt", "r", encoding='utf8')
 
     rawString = f.read()
 
