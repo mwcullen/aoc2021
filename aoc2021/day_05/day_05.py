@@ -1,105 +1,136 @@
-from typing import List
+from os import linesep
+from typing import List, NamedTuple, Tuple
+from enum import Enum
 from dataclasses import dataclass
 
 
-@dataclass
-class Square:
-    val: int = 0
-    selected: bool = False
+class LineType(Enum):
+    NONE = 0
+    HORIZONTAL = 1
+    VERTICAL = 2
+    DIAGONAL = 3
+
+
+def between(val1, val2, valTest) -> bool:
+    min: int
+    max: int
+
+    if val1 <= val2:
+        min = val1
+        max = val2
+    else:
+        min = val2
+        max = val1
+
+    if min <= valTest <= max:
+        return True
+    else:
+        return False
+
+
+class Coordinates(NamedTuple):
+    x: int
+    y: int
 
 
 @dataclass
-class BingoBoard:
-    board: List[List[Square]]
+class Line:
+    startCoordinates: Coordinates
+    endCoordinates: Coordinates
 
-    def selectVals(self, value: int):
-        for i, rows in enumerate(self.board):
-            for j, cols in enumerate(rows):
-                if cols.val == value:
-                    self.board[i][j].selected = True
+    increasingX: bool = False
+    increasingY: bool = False
 
-    def sumUnmarked(self) -> int:
-        sumBoard: int = 0
-        for rows in self.board:
+    def findLineType(self) -> LineType:
+        # horizontal
+        if self.startCoordinates.x == self.endCoordinates.x:
+            return LineType.VERTICAL
+        if self.startCoordinates.y == self.endCoordinates.y:
+            return LineType.HORIZONTAL
+        if abs(self.startCoordinates.x - self.endCoordinates.x) == abs(self.startCoordinates.y == self.endCoordinates.y):
+            return LineType.DIAGONAL
+        else:
+            return LineType.NONE
+
+    def generatePointsList(self) -> List[Coordinates]:
+        lstCoords: List[Coordinates]
+        if self.findLineType() == LineType.HORIZONTAL:
+            if self.increasingY == True:
+                for i in range(self.startCoordinates.y, self.endCoordinates.y+1):
+                    lstCoords.append(Coordinates(
+                        x=self.startCoordinates.x, y=i))
+            if self.increasingY == False:
+                for i in range(self.endCoordinates.y, self.startCoordinates.y+1):
+                    lstCoords.append(Coordinates(
+                        x=self.startCoordinates.x, y=i))
+
+
+@dataclass
+class Grid:
+    gridList: List[List[int]]
+
+    def addLineHoriVertOnly(self, lineSeg: Line):
+        return
+
+    def linesIntersect(self) -> int:
+        totalIntersections: int = 0
+        for rows in self.gridList:
             for cols in rows:
-                if cols.selected == False:
-                    sumBoard += cols.val
-        return sumBoard
+                if cols > 1:
+                    totalIntersections += 1
+        return totalIntersections
 
-    def winningBoard(self) -> bool:
-        winningBoard = False
-        for i, rows in enumerate(self.board):
-            selectedCount: int = 0
-            for j, cols in enumerate(rows):
-                if cols.selected == True:
-                    selectedCount += 1
-            if selectedCount == len(rows):
-                winningBoard = True
 
-        for i, rows in enumerate(self.board):
-            selectedCount: int = 0
-            for j, cols in enumerate(rows):
-                if self.board[j][i].selected == True:
-                    selectedCount += 1
-            if selectedCount == len(rows):
-                winningBoard = True
-
-        return winningBoard
-
-def allWinners(l1:List[int]) -> bool:
-    allWinners = False
-    count = 0
-    for l in l1:
-        if l == 1:
-            count += 1
-    if count == len(l1):
-        allWinners = True
-
-    return allWinners
-
+def maxGridVals(lstCoords: List[Coordinates]) -> Tuple[int, int]:
+    maxX: int = 0
+    maxY: int = 0
+    for coord in lstCoords:
+        if coord.x > maxX:
+            maxX = coord.x
+        if coord.y > maxY:
+            maxY = coord.y
+    return (maxX, maxY)
 
 
 def main():
-    f = open("./input1.txt", "r", encoding='utf8')
+    f = open("./inputTest.txt", "r", encoding='utf8')
 
     rawString = f.read()
 
-    calledNumsStr: str = rawString.splitlines()[0]
-    boardsStr: List[str] = rawString.split('\n\n')[1:]
+    # wrangle the data
+    lstLines: List[Line] = []
+    lineString: List[str] = rawString.splitlines()
+    allCoords: List[Coordinates] = []
 
-    calledNums: List[int] = list(map(int, calledNumsStr.split(',')))
-    listBoards: List[BingoBoard] = []
+    for stringline in lineString:
+        tokens = stringline.split(' -> ')
+        startCoordChars = tokens[0].split(',')
+        endCoordChars = tokens[1].split(',')
 
-    for string in boardsStr:
-        thisboard: List[List[Square]] = []
-        lstRows = string.splitlines()
+        allCoords.append(Coordinates(
+            int(startCoordChars[0]), int(startCoordChars[1])))
+        allCoords.append(Coordinates(
+            int(endCoordChars[0]), int(endCoordChars[1])))
 
-        for row in lstRows:
-            tempRow: List[Square] = []
-            lstCols = list(map(int, row.split()))
+        tempLine: Line = Line(startCoordinates=Coordinates(int(startCoordChars[0]), int(
+            startCoordChars[1])), endCoordinates=Coordinates(int(endCoordChars[0]), int(endCoordChars[1])))
 
-            for col in lstCols:
-                tempRow.append(Square(col, False))
+        if tempLine.startCoordinates.x < tempLine.endCoordinates.x:
+            tempLine.increasingX = True
+        if tempLine.startCoordinates.y < tempLine.endCoordinates.y:
+            tempLine.increasingY = True
 
-            thisboard.append(tempRow)
+        lstLines.append(tempLine)
 
-        listBoards.append(BingoBoard(thisboard))
+    gridSize: Tuple[int, int] = maxGridVals(allCoords)
 
-    winners:List[int] = [0]* len(listBoards)
+    grid: Grid = Grid(gridList=([[0] * (gridSize[0]+1)
+                      for _ in range(gridSize[1] + 1)]))
 
-    for num in calledNums:
-        breakcondition = False
-        for i, _ in enumerate(listBoards):
-            listBoards[i].selectVals(num)
-            if listBoards[i].winningBoard() == True:
-                winners[i] = 1
-                if allWinners(winners):
-                    print(num, listBoards[i].sumUnmarked())
-                    print(listBoards[i].sumUnmarked() * num)
-                    breakcondition = True
-                    break
-        if breakcondition == True:
-            break
+    for line in lstLines:
+        grid.addLineHoriVertOnly(line)
+
+    print(grid.linesIntersect())
 
 
 if __name__ == '__main__':
