@@ -1,7 +1,4 @@
-from typing import List, NamedTuple, Tuple
-from enum import Enum
-from dataclasses import dataclass
-
+ from typing import List 
 
 def advanceDay(l1: List[int]) -> List[int]:
     newFishPerDay: List[int] = [0]*9
@@ -30,15 +27,11 @@ def main():
     for _ in range(256):
         lstFishPerDay = advanceDay(lstFishPerDay)
 
-    sumFish:int = 0
+    sumFish: int = 0
     for fish in lstFishPerDay:
         sumFish += fish
 
     print(sumFish)
-
-
-
-
 
 
 if __name__ == '__main__':
