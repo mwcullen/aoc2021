@@ -61,7 +61,7 @@ class Display:
             else:
                 self.decodeKey.update({0: item})
 
-    def checkDecodeKey(self, s1: str) -> int:
+    def __checkDecodeKey(self, s1: str) -> int:
         set1 = set(s1)
         placeHolder: int = -1
         for key, value in self.decodeKey.items():
@@ -75,8 +75,8 @@ class Display:
 
         lstOutputVals: List[str] = []
         for item in self.output:
-            if self.checkDecodeKey(item) != -1:
-                lstOutputVals.append(str(self.checkDecodeKey(item)))
+            if self.__checkDecodeKey(item) != -1:
+                lstOutputVals.append(str(self.__checkDecodeKey(item)))
 
         finalOutput = int(''.join(lstOutputVals))
         print(finalOutput)
