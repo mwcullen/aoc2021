@@ -32,7 +32,7 @@ def main():
 
     lstRawInstructions: List[str] = instructionsRaw.splitlines()
 
-    parsedInstructions = [Instruction]
+    parsedInstructions: List[Instruction] = []
 
     for instruction in lstRawInstructions:
         dirvalpair = instruction.split()
