@@ -1,8 +1,6 @@
 from typing import List
-from math import ceil
 from dataclasses import dataclass
 from typing import Dict
-import string
 
 
 @dataclass
@@ -10,29 +8,80 @@ class Display:
     signal: List[str]
     output: List[str]
 
-    decode: Dict[int, str]
+    decodeKey: Dict[int, str]
 
-    def decodeFirstFour(self):
+    def __decode(self):
+        self.__decodeFirstFour()
+        self.__decodeRest()
+
+    def __decodeFirstFour(self):
         for signal in self.signal:
             length = len(signal)
             if length == 2:
-                self.decode.update({1: signal})
+                self.decodeKey.update({1: signal})
             elif length == 3:
-                self.decode.update({7: signal})
+                self.decodeKey.update({7: signal})
             elif length == 4:
-                self.decode.update({4: signal})
+                self.decodeKey.update({4: signal})
             elif length == 7:
-                self.decode.update({8: signal})
+                self.decodeKey.update({8: signal})
 
-    def decode235(self):
+    def __decodeRest(self):
         # get list of elements with len == 5
         lstLen5 = [x for x in self.signal if len(x) == 5]
         # find 3
-        oneLetters = set(self.decode.get(1) or '')
+        oneLetters = set(self.decodeKey.get(1) or '')
         for item in lstLen5:
             if set(item) >= oneLetters:
-                self.decode.update({3: item})
+                self.decodeKey.update({3: item})
                 lstLen5.remove(item)
+
+        lstLen6 = [x for x in self.signal if len(x) == 6]
+        # find 6
+        for item in lstLen6:
+            if set(item) >= oneLetters:
+                pass
+            else:
+                self.decodeKey.update({6: item})
+                lstLen6.remove(item)
+
+        # find 5 and 2
+        sixLetters = set(self.decodeKey.get(6) or '')
+        for item in lstLen5:
+            if sixLetters >= set(item):
+                self.decodeKey.update({5: item})
+            else:
+                self.decodeKey.update({2: item})
+
+        # find 0 and 9
+        fourLetters = set(self.decodeKey.get(4) or '')
+        for item in lstLen6:
+            if set(item) >= set(fourLetters):
+                self.decodeKey.update({9: item})
+            else:
+                self.decodeKey.update({0: item})
+
+    def checkDecodeKey(self, s1: str) -> int:
+        set1 = set(s1)
+        placeHolder: int = -1
+        for key, value in self.decodeKey.items():
+            if set(value) == set1:
+                placeHolder = key
+
+        return placeHolder
+
+    def decodeOutput(self) -> int:
+        self.__decode()
+
+        lstOutputVals: List[str] = []
+        for item in self.output:
+            if self.checkDecodeKey(item) != -1:
+                lstOutputVals.append(str(self.checkDecodeKey(item)))
+
+        finalOutput = int(''.join(lstOutputVals))
+        print(finalOutput)
+
+        return finalOutput
 
 
 def main():
@@ -54,17 +103,14 @@ def main():
         tempOutput = splitLine[1].split()
 
         lstDisplay.append(Display(signal=tempSignals,
-                          output=tempOutput, decode={}))
+                          output=tempOutput, decodeKey={}))
 
-    totalSpecificValues = 0
-    specificValues = [1, 4, 7, 8]
+    runningTotal = 0
 
-    for displays in lstDisplay:
-        for output in displays.output:
-            if decodeOutputToken(output) in specificValues:
-                totalSpecificValues += 1
+    for display in lstDisplay:
+        runningTotal += display.decodeOutput()
 
-    print(totalSpecificValues)
+    print(runningTotal)
 
 
 if __name__ == '__main__':
