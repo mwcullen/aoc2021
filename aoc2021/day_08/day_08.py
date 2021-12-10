@@ -79,7 +79,6 @@ class Display:
                 lstOutputVals.append(str(self.__checkDecodeKey(item)))
 
         finalOutput = int(''.join(lstOutputVals))
-        print(finalOutput)
 
         return finalOutput
 
