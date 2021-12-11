@@ -32,7 +32,7 @@ class HeightMap:
             lowPoint = False
         elif rightCoords is not None and rightCoords <= currentVal:
             lowPoint = False
-        
+
         return lowPoint
 
 
@@ -56,7 +56,7 @@ def main():
 
     totalLowPoints: int = 0
     for i, yList in enumerate(heightMap.grid):
-        for j, xVals in enumerate(yList):
+        for j, _ in enumerate(yList):
             if heightMap.checkForLowPoint(j, i):
                 totalLowPoints += heightMap.grid[i][j] + 1
                 print(heightMap.grid[i][j])
